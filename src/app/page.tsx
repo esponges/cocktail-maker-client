@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -8,27 +7,17 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
   Form,
-  FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { mixers } from '@/lib/form-options';
+import MultipleSelector from '@/components/ui/multiple-selector';
 
 const FormSchema = z.object({
-  email: z
-    .string({
-      required_error: 'Please select an email to display.',
-    })
-    .email(),
+  mixers: z.array(z.object({ value: z.string(), label: z.string() })),
 });
 
 export default function Home() {
@@ -49,34 +38,36 @@ export default function Home() {
         >
           <FormField
             control={form.control}
-            name='email'
-            render={({ field }) => (
+            name='mixers'
+            render={({ field: { onChange } }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select a verified email to display' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='m@example.com'>m@example.com</SelectItem>
-                    <SelectItem value='m@google.com'>m@google.com</SelectItem>
-                    <SelectItem value='m@support.com'>m@support.com</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  You can manage email addresses in your{' '}
-                  <Link href='/examples/forms'>email settings</Link>.
-                </FormDescription>
+                <FormLabel>Mixers</FormLabel>
+                <MultipleSelector
+                  maxSelected={3}
+                  onMaxSelected={(maxLimit) => {
+                    // toast({
+                    //   title: `You have reached max selected: ${maxLimit}`,
+                    // });
+                    console.log(`You have reached max selected: ${maxLimit}`);
+                  }}
+                  onChange={(value) => {
+                    console.log(value);
+                    onChange(value);
+                  }}
+                  defaultOptions={mixers}
+                  placeholder='Select at least one...'
+                  emptyIndicator={
+                    <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                      no results found.
+                    </p>
+                  }
+                />
+                <FormDescription>You can select up to 3 mixers</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+          <Button type='submit'>Create Cocktail 🍸</Button>
         </form>
       </Form>
     </main>
