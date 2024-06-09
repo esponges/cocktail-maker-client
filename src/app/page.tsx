@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormDescription,
@@ -13,17 +13,17 @@ import {
   FormLabel,
   FormMessage,
   FormControl,
-} from '@/components/ui/form';
+} from "@/components/ui/form";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { mixers, spirits, moment, complexity, tools } from '@/lib/form-options';
-import MultipleSelector from '@/components/ui/multiple-selector';
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { mixers, spirits, moment, complexity, tools } from "@/lib/form-options";
+import MultipleSelector from "@/components/ui/multiple-selector";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -46,15 +46,15 @@ export default function Home() {
   }
 
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='w-2/3 space-y-6'
+          className="w-2/3 space-y-6"
         >
           <FormField
             control={form.control}
-            name='spirits'
+            name="spirits"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Spirits</FormLabel>
@@ -65,9 +65,9 @@ export default function Home() {
                     field.onChange(value);
                   }}
                   defaultOptions={spirits}
-                  placeholder='Select at least one...'
+                  placeholder="Select at least one..."
                   emptyIndicator={
-                    <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                       no results found.
                     </p>
                   }
@@ -81,7 +81,7 @@ export default function Home() {
           />
           <FormField
             control={form.control}
-            name='mixers'
+            name="mixers"
             render={({ field: { onChange } }) => (
               <>
                 <FormItem>
@@ -96,9 +96,9 @@ export default function Home() {
                       onChange(value);
                     }}
                     defaultOptions={mixers}
-                    placeholder='Select at least one...'
+                    placeholder="Select at least one..."
                     emptyIndicator={
-                      <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                         no results found.
                       </p>
                     }
@@ -113,19 +113,22 @@ export default function Home() {
           />
           <FormField
             control={form.control}
-            name='moment'
+            name="moment"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Moment</FormLabel>
                 <Select onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a moment' />
+                      <SelectValue placeholder="Select a moment" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {moment.map((item) => (
-                      <SelectItem key={item.value} value={item.value}>
+                      <SelectItem
+                        key={item.value}
+                        value={item.value}
+                      >
                         {item.label}
                       </SelectItem>
                     ))}
@@ -140,14 +143,14 @@ export default function Home() {
           />
           <FormField
             control={form.control}
-            name='cost'
+            name="cost"
             defaultValue={0}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Cost</FormLabel>
                 <Input
-                  type='number'
-                  placeholder='Cost of the cocktail'
+                  type="number"
+                  placeholder="Cost of the cocktail"
                   {...field}
                 />
                 <FormDescription>
@@ -159,7 +162,7 @@ export default function Home() {
           />
           <FormField
             control={form.control}
-            name='complexity'
+            name="complexity"
             defaultValue={complexity[0].value}
             render={({ field }) => (
               <FormItem>
@@ -167,12 +170,15 @@ export default function Home() {
                 <Select onValueChange={field.onChange}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a complexity' />
+                      <SelectValue placeholder="Select a complexity" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {complexity.map((item) => (
-                      <SelectItem key={item.value} value={item.value}>
+                      <SelectItem
+                        key={item.value}
+                        value={item.value}
+                      >
                         {item.label}
                       </SelectItem>
                     ))}
@@ -187,7 +193,7 @@ export default function Home() {
           />
           <FormField
             control={form.control}
-            name='tools'
+            name="tools"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tools</FormLabel>
@@ -198,9 +204,9 @@ export default function Home() {
                     field.onChange(value);
                   }}
                   defaultOptions={tools}
-                  placeholder='Select tools...'
+                  placeholder="Select tools..."
                   emptyIndicator={
-                    <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                       no results found.
                     </p>
                   }
@@ -212,7 +218,7 @@ export default function Home() {
               </FormItem>
             )}
           />
-          <Button type='submit'>Create Cocktail 🍸</Button>
+          <Button type="submit">Create Cocktail 🍸</Button>
         </form>
       </Form>
     </main>
