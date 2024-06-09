@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { mixers, spirits, moment } from '@/lib/form-options';
+import { Input } from '@/components/ui/input';
+import { mixers, spirits, moment, complexity, tools } from '@/lib/form-options';
 import MultipleSelector from '@/components/ui/multiple-selector';
 
 const FormSchema = z.object({
@@ -30,6 +31,9 @@ const FormSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .optional(),
   moment: z.string().optional(),
+  cost: z.number().min(0).optional(),
+  complexity: z.string().optional(),
+  tools: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
 });
 
 export default function Home() {
@@ -129,6 +133,80 @@ export default function Home() {
                 </Select>
                 <FormDescription>
                   Optional - The moment or time of the cocktail
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='cost'
+            defaultValue={0}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cost</FormLabel>
+                <Input
+                  type='number'
+                  placeholder='Cost of the cocktail'
+                  {...field}
+                />
+                <FormDescription>
+                  Optional - The cost of the cocktail
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='complexity'
+            defaultValue={complexity[0].value}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Complexity</FormLabel>
+                <Select onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder='Select a complexity' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {complexity.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormDescription>
+                  Optional - The complexity of the cocktail
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='tools'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tools</FormLabel>
+                <MultipleSelector
+                  maxSelected={3}
+                  onChange={(value) => {
+                    console.log(value);
+                    field.onChange(value);
+                  }}
+                  defaultOptions={tools}
+                  placeholder='Select tools...'
+                  emptyIndicator={
+                    <p className='text-center text-lg leading-10 text-gray-600 dark:text-gray-400'>
+                      no results found.
+                    </p>
+                  }
+                />
+                <FormDescription>
+                  Optional - Select up to 3 tools that you want to use
                 </FormDescription>
                 <FormMessage />
               </FormItem>

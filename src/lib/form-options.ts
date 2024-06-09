@@ -44,3 +44,19 @@ export const moment = [
   { value: 'relaxing at home', label: 'Relaxing at home' },
   { value: 'at the  beach', label: 'At the  beach' },
 ];
+
+export const complexity = [
+  { value: 'easy', label: 'Easy' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'hard', label: 'Hard' },
+];
+
+export const tools = [
+  { value: 'shaker', label: 'Shaker' },
+  { value: 'glass', label: 'Glass' },
+  { value: 'jigger', label: 'Jigger' },
+  { value: 'muddler', label: 'Muddler' },
+  { value: 'strainer', label: 'Strainer' },
+  { value: 'twisted spoon', label: 'Twisted Spoon' },
+  { value: 'ice filter', label: 'Ice Filter' },
+];
