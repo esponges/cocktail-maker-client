@@ -27,6 +27,7 @@ import MultipleSelector from "@/components/ui/multiple-selector";
 import { useState } from "react";
 import { safeFetch } from "@/lib/safeFetch";
 import { getErrorMessage } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -78,7 +79,7 @@ export default function Home() {
           method: "POST",
           body: JSON.stringify(body),
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         },
         schema: z.object({
@@ -123,50 +124,21 @@ export default function Home() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-2/3 space-y-6"
         >
-          <FormField
-            control={form.control}
-            name="spirits"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Spirits</FormLabel>
-                <MultipleSelector
-                  maxSelected={3}
-                  onChange={(value) => {
-                    console.log(value);
-                    field.onChange(value);
-                  }}
-                  defaultOptions={spirits}
-                  placeholder="Select at least one..."
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no results found.
-                    </p>
-                  }
-                />
-                <FormDescription>
-                  Optional - Select up to 3 spirits
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="mixers"
-            render={({ field: { onChange } }) => (
-              <>
+          <fieldset disabled={loading}>
+            <FormField
+              control={form.control}
+              name="spirits"
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mixers *</FormLabel>
+                  <FormLabel>Spirits</FormLabel>
                   <MultipleSelector
                     maxSelected={3}
-                    onMaxSelected={(maxLimit) => {
-                      console.log(`You have reached max selected: ${maxLimit}`);
-                    }}
                     onChange={(value) => {
                       console.log(value);
-                      onChange(value);
+                      field.onChange(value);
                     }}
-                    defaultOptions={mixers}
+                    disabled={loading}
+                    defaultOptions={spirits}
                     placeholder="Select at least one..."
                     emptyIndicator={
                       <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
@@ -175,121 +147,165 @@ export default function Home() {
                     }
                   />
                   <FormDescription>
-                    You can select up to 3 mixers
+                    Optional - Select up to 3 spirits
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
-              </>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="moment"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Moment</FormLabel>
-                <Select onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a moment" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {moment.map((item) => (
-                      <SelectItem
-                        key={item.value}
-                        value={item.value}
-                      >
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Optional - The moment or time of the cocktail
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="cost"
-            defaultValue={0}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Cost</FormLabel>
-                <Input
-                  type="number"
-                  placeholder="Cost of the cocktail"
-                  {...field}
-                />
-                <FormDescription>
-                  Optional - The cost of the cocktail
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="complexity"
-            defaultValue={complexity[0].value}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Complexity</FormLabel>
-                <Select onValueChange={field.onChange}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a complexity" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {complexity.map((item) => (
-                      <SelectItem
-                        key={item.value}
-                        value={item.value}
-                      >
-                        {item.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormDescription>
-                  Optional - The complexity of the cocktail
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="tools"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tools</FormLabel>
-                <MultipleSelector
-                  maxSelected={5}
-                  onChange={(value) => {
-                    console.log(value);
-                    field.onChange(value);
-                  }}
-                  defaultOptions={tools}
-                  placeholder="Select tools..."
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no results found.
-                    </p>
-                  }
-                />
-                <FormDescription>
-                  Optional - Select up to 5 tools that you want to use
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Create Cocktail 🍸</Button>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="mixers"
+              render={({ field: { onChange } }) => (
+                <>
+                  <FormItem>
+                    <FormLabel>Mixers *</FormLabel>
+                    <MultipleSelector
+                      maxSelected={3}
+                      onMaxSelected={(maxLimit) => {
+                        console.log(
+                          `You have reached max selected: ${maxLimit}`
+                        );
+                      }}
+                      disabled={loading}
+                      onChange={(value) => {
+                        console.log(value);
+                        onChange(value);
+                      }}
+                      defaultOptions={mixers}
+                      placeholder="Select at least one..."
+                      emptyIndicator={
+                        <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                          no results found.
+                        </p>
+                      }
+                    />
+                    <FormDescription>
+                      You can select up to 3 mixers
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                </>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="moment"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Moment</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a moment" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {moment.map((item) => (
+                        <SelectItem
+                          key={item.value}
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Optional - The moment or time of the cocktail
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cost"
+              defaultValue={0}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cost</FormLabel>
+                  <Input
+                    type="number"
+                    placeholder="Cost of the cocktail"
+                    {...field}
+                  />
+                  <FormDescription>
+                    Optional - The cost of the cocktail
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="complexity"
+              defaultValue={complexity[0].value}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Complexity</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a complexity" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {complexity.map((item) => (
+                        <SelectItem
+                          key={item.value}
+                          value={item.value}
+                        >
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Optional - The complexity of the cocktail
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tools"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tools</FormLabel>
+                  <MultipleSelector
+                    maxSelected={5}
+                    onChange={(value) => {
+                      console.log(value);
+                      field.onChange(value);
+                    }}
+                    defaultOptions={tools}
+                    placeholder="Select tools..."
+                    emptyIndicator={
+                      <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                        no results found.
+                      </p>
+                    }
+                  />
+                  <FormDescription>
+                    Optional - Select up to 5 tools that you want to use
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="text-center mt-4">
+              {!loading ? (
+                <Button type="submit">Create Cocktail 🍸</Button>
+              ) : (
+                <div className="flex items-center justify-center space-x-2">
+                  <span>We are crafting your cocktail.</span>
+                  <Spinner show />
+                </div>
+              )}
+            </div>
+          </fieldset>
         </form>
       </Form>
     </main>
