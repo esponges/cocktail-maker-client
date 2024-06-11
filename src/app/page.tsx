@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useToast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +57,8 @@ type Cocktail = {
 export default function Home() {
   const [cocktail, setCocktail] = useState<Cocktail>();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+
+  const { toast } = useToast();
 
   async function createCocktail(details: z.infer<typeof FormSchema>) {
     setLoading(true);
@@ -98,9 +100,12 @@ export default function Home() {
 
       setCocktail(res);
     } catch (err: unknown) {
-      // console.log(error);
       const msg = getErrorMessage(err);
 
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        });
       console.error(msg);
     } finally {
       setLoading(false);
@@ -296,11 +301,11 @@ export default function Home() {
               )}
             />
             <div className="text-center mt-4">
-              {!loading ? (
+              {loading ? (
                 <Button type="submit">Create Cocktail 🍸</Button>
               ) : (
                 <div className="flex items-center justify-center space-x-2">
-                  <span>We are crafting your cocktail.</span>
+                  <span>We are crafting your cocktail...</span>
                   <Spinner show />
                 </div>
               )}
