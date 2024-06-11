@@ -72,46 +72,30 @@ export default function Home() {
       delete body.tools;
       delete body.spirits;
 
-      // const res = await safeFetch<Cocktail>({
-      //   input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
-      //   init: {
-      //     method: "POST",
-      //     body: JSON.stringify(body),
-      //   },
-      //   schema: z.object({
-      //     // id: z.string(),
-      //     name: z.string(),
-      //     recipe: z.string(),
-      //     is_alcoholic: z.boolean(),
-      //     mixers: z.array(z.string()),
-      //     size: z.string(),
-      //     cost: z.number(),
-      //     complexity: z.string(),
-      //     required_ingredients: z.array(z.string()),
-      //     required_tools: z.array(z.string()),
-      //   }),
-      // });
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
-        {
+      const res = await safeFetch<Cocktail>({
+        input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
+        init: {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
           body: JSON.stringify(body),
-        }
-      );
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        schema: z.object({
+          // id: z.string(),
+          name: z.string(),
+          recipe: z.string(),
+          is_alcoholic: z.boolean(),
+          mixers: z.array(z.string()),
+          size: z.string(),
+          cost: z.number(),
+          complexity: z.string(),
+          required_ingredients: z.array(z.string()),
+          required_tools: z.array(z.string()),
+        }),
+      });
 
-      if (!res.ok) {
-        const err = await res.json();
-        
-        throw new Error("Failed to create cocktail", err);
-      }
-
-      const json = await res.json();
-
-      setCocktail(json);
+      setCocktail(res);
     } catch (err: unknown) {
       // console.log(error);
       const msg = getErrorMessage(err);
