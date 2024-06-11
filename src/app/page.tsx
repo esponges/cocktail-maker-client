@@ -24,6 +24,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { mixers, spirits, moment, complexity, tools } from "@/lib/form-options";
 import MultipleSelector from "@/components/ui/multiple-selector";
+import { useState } from "react";
+import { safeFetch } from "@/lib/safeFetch";
+import { getErrorMessage } from "@/lib/utils";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -31,19 +34,103 @@ const FormSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .optional(),
   moment: z.string().optional(),
-  cost: z.number().min(0).optional(),
+  cost: z.coerce.number().optional(),
   complexity: z.string().optional(),
   tools: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
 });
 
+type Cocktail = {
+  // id: string;
+  name: string;
+  recipe: string;
+  is_alcoholic: boolean;
+  mixers: string[];
+  size: string;
+  cost: number;
+  complexity: string;
+  required_ingredients: string[];
+  required_tools: string[];
+};
+
 export default function Home() {
+  const [cocktail, setCocktail] = useState<Cocktail>();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function createCocktail(details: z.infer<typeof FormSchema>) {
+    setLoading(true);
+    try {
+      const body = {
+        ...details,
+        mixers: [
+          ...details.mixers.map((m) => m.value),
+          ...(details.spirits?.map((s) => s.value) || []),
+        ],
+        required_tools: details.tools?.map((t) => t.value),
+      };
+
+      delete body.tools;
+      delete body.spirits;
+
+      // const res = await safeFetch<Cocktail>({
+      //   input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
+      //   init: {
+      //     method: "POST",
+      //     body: JSON.stringify(body),
+      //   },
+      //   schema: z.object({
+      //     // id: z.string(),
+      //     name: z.string(),
+      //     recipe: z.string(),
+      //     is_alcoholic: z.boolean(),
+      //     mixers: z.array(z.string()),
+      //     size: z.string(),
+      //     cost: z.number(),
+      //     complexity: z.string(),
+      //     required_ingredients: z.array(z.string()),
+      //     required_tools: z.array(z.string()),
+      //   }),
+      // });
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        
+        throw new Error("Failed to create cocktail", err);
+      }
+
+      const json = await res.json();
+
+      setCocktail(json);
+    } catch (err: unknown) {
+      // console.log(error);
+      const msg = getErrorMessage(err);
+
+      console.error(msg);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+    createCocktail(data);
   }
+
+  console.log({ cocktail });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -198,7 +285,7 @@ export default function Home() {
               <FormItem>
                 <FormLabel>Tools</FormLabel>
                 <MultipleSelector
-                  maxSelected={3}
+                  maxSelected={5}
                   onChange={(value) => {
                     console.log(value);
                     field.onChange(value);
@@ -212,7 +299,7 @@ export default function Home() {
                   }
                 />
                 <FormDescription>
-                  Optional - Select up to 3 tools that you want to use
+                  Optional - Select up to 5 tools that you want to use
                 </FormDescription>
                 <FormMessage />
               </FormItem>
