@@ -53,7 +53,11 @@ const FormSchema = z.object({
 type Cocktail = {
   // id: string;
   name: string;
-  recipe: string;
+  description: string;
+  steps: {
+    index: number;
+    description: string;
+  }[];
   is_alcoholic: boolean;
   mixers: string[];
   size: string;
@@ -66,9 +70,32 @@ type Cocktail = {
 export default function Home() {
   const [cocktail, setCocktail] = useState<Cocktail>({
     name: "Tropical Birthday Fizz",
-    recipe:
-      // eslint-disable-next-line max-len
-      "## Tropical Birthday Fizz\n\n### Required Tools and Ingredients:\n- Jigger\n- Strainer\n- Shaker\n- Lemon juice\n- Pineapple juice\n- Rum (such as Bacardi)\n- Simple syrup\n- Soda water\n\n### Description:\nThe Tropical Birthday Fizz is a refreshing and celebratory cocktail perfect for a birthday party. The combination of tart lemon, sweet pineapple, and smooth rum creates a tropical flavor that is balanced by the effervescence of soda water. This medium-complexity cocktail is sure to delight your guests and get the party started.\n\n### Instructions:\n1. Fill a cocktail shaker with ice.\n2. Add 1.5 oz of rum, 1 oz of lemon juice, 1 oz of pineapple juice, and 0.5 oz of simple syrup.\n3. Shake vigorously for 10-15 seconds.\n4. Double strain the mixture into a highball glass filled with fresh ice.\n5. Top with 2-3 oz of soda water and stir gently to combine.\n6. Garnish with a lemon wedge or pineapple slice.\n7. Serve and enjoy!",
+    description: `A bold and complex cocktail that combines the flavors of lemon, rum, 
+    and whisky for a unique and sophisticated sipping experience.`,
+    steps: [
+      {
+        index: 1,
+        description:
+          "In a cocktail shaker, muddle the lemon juice, rum, and whisky together until well combined.",
+      },
+      {
+        index: 2,
+        description:
+          "Add ice to the shaker and shake vigorously for 10-15 seconds.",
+      },
+      {
+        index: 3,
+        description: "Strain the mixture into a chilled cocktail glass.",
+      },
+      {
+        index: 4,
+        description: "Top with ginger beer and a splash of simple syrup.",
+      },
+      {
+        index: 5,
+        description: "Garnish with a lemon twist.",
+      },
+    ],
     is_alcoholic: true,
     mixers: ["lemon juice", "pineapple juice", "simple syrup", "soda water"],
     size: "Unknown",
@@ -107,8 +134,11 @@ export default function Home() {
         },
         schema: z.object({
           // id: z.string(),
+          steps: z.array(
+            z.object({ index: z.number(), description: z.string() })
+          ),
           name: z.string(),
-          recipe: z.string(),
+          description: z.string(),
           is_alcoholic: z.boolean(),
           mixers: z.array(z.string()),
           size: z.string(),
@@ -140,8 +170,6 @@ export default function Home() {
   function onSubmit(data: z.infer<typeof FormSchema>) {
     createCocktail(data);
   }
-
-  console.log({ cocktail }, !cocktail);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -336,32 +364,40 @@ export default function Home() {
           </form>
         </Form>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>{cocktail.name}</CardTitle>
-            <CardDescription>{cocktail.recipe}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p>
-              <b>Ingredients:</b> {cocktail.required_ingredients.join(", ")}
-            </p>
-            <p>
-              <b>Mixers:</b> {cocktail.mixers.join(", ")}
-            </p>
-            {/* <p>
-              <b>Moment:</b> {cocktail.moment}
-            </p> */}
-            <p>
-              <b>Cost:</b> {cocktail.cost}
-            </p>
-            <p>
-              <b>Complexity:</b> {cocktail.complexity}
-            </p>
-            <p>
-              <b>Tools:</b> {cocktail.required_tools.join(", ")}
-            </p>
-          </CardContent>
-        </Card>
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>{cocktail.name}</CardTitle>
+              <CardDescription>{cocktail.description}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p>
+                <b>Ingredients:</b> {cocktail.required_ingredients.join(", ")}
+              </p>
+              <p>
+                <b>Mixers:</b> {cocktail.mixers.join(", ")}
+              </p>
+              <p>
+                <b>Cost:</b> {cocktail.cost}
+              </p>
+              <p>
+                <b>Complexity:</b> {cocktail.complexity}
+              </p>
+              <p>
+                <b>Tools:</b> {cocktail.required_tools.join(", ")}
+              </p>
+            </CardContent>
+            <CardFooter>
+              {/* steps */}
+              <ol className="list-decimal list-inside">
+                <h3 className="font-bold">Steps</h3>
+                {cocktail.steps.map((step, index) => (
+                  <li key={index} className="my-4">{step.description}</li>
+                ))}
+              </ol>
+            </CardFooter>
+          </Card>
+        </>
       )}
     </main>
   );
