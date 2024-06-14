@@ -35,7 +35,7 @@ import {
 import MultipleSelector from "@/components/ui/multiple-selector";
 
 import { mixers, spirits, moment, complexity, tools } from "@/lib/form-options";
-import { safeFetch } from "@/lib/safeFetch";
+import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
