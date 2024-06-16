@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
 import "./globals.css";
+import { DepProvider } from "@/components/context/dep-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -31,7 +32,7 @@ export default function RootLayout({
         )}
       >
         <Toaster />
-        {children}
+        <DepProvider>{children}</DepProvider>
       </body>
     </html>
   );

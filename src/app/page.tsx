@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -39,7 +39,7 @@ import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import IdxDbWrapper from "@/components/ui/layouts/idxdb";
-import { initDB } from "@/lib/idxdb";
+import { DepContext } from "@/components/context/dep-provider"; 
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -109,6 +109,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
+  const { idxdb } = useContext(DepContext);
+  
+  console.log("idxdb", idxdb);
+  idxdb.cocktails.bulkGet(["1"]).then((res) => {
+    console.log("res", res);
+  });
 
   async function createCocktail(details: z.infer<typeof FormSchema>) {
     setLoading(true);
@@ -175,7 +181,6 @@ export default function Home() {
 
   return (
     <IdxDbWrapper>
-      <button onClick={() => initDB()}>Create</button>
       <main className="flex min-h-screen flex-col items-center justify-between p-24">
         {!cocktail ? (
           <Form {...form}>
