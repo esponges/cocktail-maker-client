@@ -3,7 +3,8 @@
 import { createContext } from "react";
 import Dexie, { type EntityTable } from "dexie";
 
-type Cocktail = {
+// todo: probably move this to a schema file
+export type Cocktail = {
   id: string;
   name: string;
   description: string;

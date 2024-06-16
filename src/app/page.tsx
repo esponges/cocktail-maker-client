@@ -39,7 +39,7 @@ import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import IdxDbWrapper from "@/components/ui/layouts/idxdb";
-import { DepContext } from "@/components/context/dep-provider";
+import { DepContext, type Cocktail } from "@/components/context/dep-provider";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -52,25 +52,11 @@ const FormSchema = z.object({
   tools: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
 });
 
-type Cocktail = {
-  // id: string;
-  name: string;
-  description: string;
-  steps: {
-    index: number;
-    description: string;
-  }[];
-  is_alcoholic: boolean;
-  mixers: string[];
-  size: string;
-  cost: number;
-  complexity: string;
-  required_ingredients: string[];
-  required_tools: string[];
-};
+type ApiCocktail = Omit<Cocktail, "id">;
 
 export default function Home() {
-  const [cocktail, setCocktail] = useState<Cocktail>(/* {
+  const [cocktail, setCocktail] =
+    useState<ApiCocktail>(/* {
     name: "Tropical Birthday Fizz",
     description: `A bold and complex cocktail that combines the flavors of lemon, rum, 
     and whisky for a unique and sophisticated sipping experience.`,
@@ -126,7 +112,7 @@ export default function Home() {
       delete body.tools;
       delete body.spirits;
 
-      const res = await safeFetch<Cocktail>({
+      const res = await safeFetch<ApiCocktail>({
         input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
         init: {
           method: "POST",
