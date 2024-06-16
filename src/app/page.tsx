@@ -39,7 +39,7 @@ import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 import IdxDbWrapper from "@/components/ui/layouts/idxdb";
-import { DepContext } from "@/components/context/dep-provider"; 
+import { DepContext } from "@/components/context/dep-provider";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -70,7 +70,7 @@ type Cocktail = {
 };
 
 export default function Home() {
-  const [cocktail, setCocktail] = useState<Cocktail>({
+  const [cocktail, setCocktail] = useState<Cocktail>(/* {
     name: "Tropical Birthday Fizz",
     description: `A bold and complex cocktail that combines the flavors of lemon, rum, 
     and whisky for a unique and sophisticated sipping experience.`,
@@ -105,12 +105,12 @@ export default function Home() {
     complexity: "Medium",
     required_tools: ["jigger", "strainer", "shaker"],
     required_ingredients: ["lemon juice", "pineapple juice", "rum"],
-  });
+  } */);
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
   const { idxdb } = useContext(DepContext);
-  
+
   async function createCocktail(details: z.infer<typeof FormSchema>) {
     setLoading(true);
     try {
@@ -151,6 +151,9 @@ export default function Home() {
           required_tools: z.array(z.string()),
         }),
       });
+
+      // todo?: abstract?
+      idxdb?.cocktails.add({ ...res, id: Date.now().toString() });
 
       setCocktail(res);
     } catch (err: unknown) {
