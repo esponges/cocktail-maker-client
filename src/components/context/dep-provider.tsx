@@ -21,15 +21,20 @@ type Cocktail = {
 };
 
 export const DepContext = createContext<{
-  idxdb: Dexie;
+  idxdb?: Dexie & {
+    cocktails: EntityTable<
+      Cocktail,
+      "id" // primary key "id" (for the typings only)
+    >;
+  }
   // more clients can be added here
-} | null>(null);
+}>({});
 
 export function DepProvider({ children }: { children: React.ReactNode }) {
   const idxdb = new Dexie("CocktailsDatabase") as Dexie & {
     cocktails: EntityTable<
       Cocktail,
-      "id" // primary key "id" (for the typings only)
+      "id"
     >;
   };
 
