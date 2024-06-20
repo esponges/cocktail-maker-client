@@ -3,6 +3,8 @@
 import { createContext } from "react";
 import Dexie, { type EntityTable } from "dexie";
 
+import { Toaster } from "../ui/toaster";
+
 // todo: probably move this to a schema file
 export type Cocktail = {
   id: string;
@@ -27,16 +29,13 @@ export const DepContext = createContext<{
       Cocktail,
       "id" // primary key "id" (for the typings only)
     >;
-  }
+  };
   // more clients can be added here
 }>({});
 
 export function DepProvider({ children }: { children: React.ReactNode }) {
   const idxdb = new Dexie("CocktailsDatabase") as Dexie & {
-    cocktails: EntityTable<
-      Cocktail,
-      "id"
-    >;
+    cocktails: EntityTable<Cocktail, "id">;
   };
 
   idxdb.version(1).stores({
@@ -45,30 +44,10 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
       "++id, name, description, steps, is_alcoholic, mixers, size, cost, complexity, required_ingredients, required_tools",
   });
 
-  idxdb.on("populate", async () => {
-    await idxdb.cocktails.bulkAdd([
-      {
-        id: "1",
-        name: "Cocktail 1",
-        description: "Cocktail 1 description",
-        steps: [
-          { index: 1, description: "Step 1" },
-          { index: 2, description: "Step 2" },
-          { index: 3, description: "Step 3" },
-        ],
-        is_alcoholic: true,
-        mixers: ["Mixer 1", "Mixer 2"],
-        size: "Large",
-        cost: 10,
-        complexity: "Medium",
-        required_ingredients: ["Ingredient 1", "Ingredient 2"],
-        required_tools: ["Tool 1", "Tool 2"],
-      },
-    ]);
-
-    console.log("Cocktails populated");
-  });
   return (
-    <DepContext.Provider value={{ idxdb }}>{children}</DepContext.Provider>
+    <>
+      <Toaster />
+      <DepContext.Provider value={{ idxdb }}>{children}</DepContext.Provider>
+    </>
   );
 }
