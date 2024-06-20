@@ -33,7 +33,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import MultipleSelector from "@/components/ui/multiple-selector";
-
+import { Checkbox } from "@/components/ui/checkbox";
 import { mixers, spirits, moment, complexity, tools } from "@/lib/form-options";
 import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
@@ -49,6 +49,7 @@ const FormSchema = z.object({
   cost: z.coerce.number().optional(),
   complexity: z.string().optional(),
   tools: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
+  hasShaker: z.boolean().optional(),
 });
 
 type ApiCocktail = Omit<Cocktail, "id"> & {
@@ -108,10 +109,12 @@ export default function Home() {
           ...(details.spirits?.map((s) => s.value) || []),
         ],
         required_tools: details.tools?.map((t) => t.value),
+        has_shaker: details.hasShaker,
       };
 
       delete body.tools;
       delete body.spirits;
+      delete body.hasShaker;
 
       const res = await safeFetch<ApiCocktail>({
         input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
@@ -181,7 +184,6 @@ export default function Home() {
                     <MultipleSelector
                       maxSelected={3}
                       onChange={(value) => {
-                        console.log(value);
                         field.onChange(value);
                       }}
                       disabled={loading}
@@ -216,7 +218,6 @@ export default function Home() {
                         }}
                         disabled={loading}
                         onChange={(value) => {
-                          console.log(value);
                           onChange(value);
                         }}
                         defaultOptions={mixers}
@@ -338,6 +339,36 @@ export default function Home() {
                     <FormDescription>
                       Optional - Select up to 5 tools that you want to use
                     </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="hasShaker"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="items-top flex space-x-2 mt-4">
+                      <Checkbox
+                        id="hasShaker"
+                        defaultChecked
+                        onCheckedChange={field.onChange}
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <label
+                          htmlFor="terms1"
+                          className={`text-sm font-medium leading-none 
+                          peer-disabled:cursor-not-allowed peer-disabled:opacity-70`}
+                        >
+                          Do you have a shaker?
+                        </label>
+                        <p className="text-sm text-muted-foreground">
+                          The Shaker is probably the most important tool to
+                          craft a cocktail. However, if you do not have one we
+                          can still create a great cocktail for you!
+                        </p>
+                      </div>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

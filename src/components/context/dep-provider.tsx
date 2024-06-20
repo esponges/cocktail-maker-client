@@ -30,7 +30,7 @@ export const DepContext = createContext<{
       "id" // primary key "id" (for the typings only)
     >;
   };
-  // more clients can be added here
+  // more dependency clients can be added here
 }>({});
 
 export function DepProvider({ children }: { children: React.ReactNode }) {
