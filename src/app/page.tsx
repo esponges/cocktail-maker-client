@@ -128,7 +128,7 @@ export default function Home() {
           name: z.string(),
           description: z.string(),
           steps: z.array(
-            z.object({ index: z.number(), description: z.string() })
+            z.object({ index: z.string(), description: z.string() })
           ),
           is_alcoholic: z.boolean(),
           mixers: z.array(z.string()),

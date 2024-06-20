@@ -11,7 +11,7 @@ export type Cocktail = {
   name: string;
   description: string;
   steps: {
-    index: number;
+    index: string;
     description: string;
   }[];
   is_alcoholic: boolean;
