@@ -52,9 +52,7 @@ const FormSchema = z.object({
   hasShaker: z.boolean().optional(),
 });
 
-type ApiCocktail = Omit<Cocktail, "id"> & {
-  required_tools?: string[];
-};
+type ApiCocktail = Omit<Cocktail, "id">;
 
 export default function Home() {
   const [cocktail, setCocktail] =
@@ -126,7 +124,7 @@ export default function Home() {
           },
         },
         schema: z.object({
-          // id: z.string(),
+          id: z.string(),
           name: z.string(),
           description: z.string(),
           steps: z.array(
@@ -142,7 +140,7 @@ export default function Home() {
         }),
       });
 
-      idxdb?.cocktails.add({ ...res, id: Date.now().toString() });
+      idxdb?.cocktails.add(res);
 
       setCocktail(res);
     } catch (err: unknown) {
@@ -406,9 +404,11 @@ export default function Home() {
               <p>
                 <b>Complexity:</b> {cocktail.complexity}
               </p>
-              <p>
-                <b>Tools:</b> {cocktail.required_tools.join(", ")}
-              </p>
+              {cocktail.required_tools ? (
+                <p>
+                  <b>Tools:</b> {cocktail.required_tools.join(", ")}
+                </p>
+              ) : null}
             </CardContent>
             <CardFooter>
               {/* steps */}

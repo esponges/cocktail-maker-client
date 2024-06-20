@@ -20,7 +20,7 @@ export type Cocktail = {
   cost: number;
   complexity: string;
   required_ingredients: string[];
-  required_tools: string[];
+  required_tools?: string[];
 };
 
 export const DepContext = createContext<{
@@ -34,7 +34,7 @@ export const DepContext = createContext<{
 }>({});
 
 export function DepProvider({ children }: { children: React.ReactNode }) {
-  const idxdb = new Dexie("CocktailsDatabase") as Dexie & {
+  const idxdb = new Dexie("cocktail_maker") as Dexie & {
     cocktails: EntityTable<Cocktail, "id">;
   };
 
