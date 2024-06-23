@@ -42,6 +42,7 @@ import { DepContext, type Cocktail } from "@/components/context/dep-provider";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
+  suggestMixers: z.boolean().optional(),
   spirits: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .optional(),
@@ -106,6 +107,7 @@ export default function Home() {
           ...details.mixers.map((m) => m.value),
           ...(details.spirits?.map((s) => s.value) || []),
         ],
+        suggest_mixers: details.suggestMixers,
         required_tools: details.tools?.map((t) => t.value),
         has_shaker: details.hasShaker,
       };
@@ -177,7 +179,7 @@ export default function Home() {
                 control={form.control}
                 name="spirits"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel>Spirits</FormLabel>
                     <MultipleSelector
                       maxSelected={3}
@@ -205,7 +207,7 @@ export default function Home() {
                 name="mixers"
                 render={({ field: { onChange } }) => (
                   <>
-                    <FormItem>
+                    <FormItem className="mt-4">
                       <FormLabel>Mixers *</FormLabel>
                       <MultipleSelector
                         maxSelected={3}
@@ -236,9 +238,40 @@ export default function Home() {
               />
               <FormField
                 control={form.control}
+                name="suggestMixers"
+                render={({ field }) => (
+                  <FormItem className="mt-4">
+                    <div className="items-top flex space-x-2 mt-4">
+                      <Checkbox
+                        id="suggestMixers"
+                        defaultChecked={false}
+                        onCheckedChange={field.onChange}
+                      />
+                      <div className="grid gap-1.5 leading-none">
+                        <label
+                          htmlFor="suggestMixers"
+                          className={`text-sm font-medium leading-none 
+                          peer-disabled:cursor-not-allowed peer-disabled:opacity-70`}
+                        >
+                          Allow extra mixers?
+                        </label>
+                        <p className="text-sm text-muted-foreground">
+                          Some cocktails might require extra mixers for the
+                          perfect recipe. However, if you only want to use the
+                          mixers you have selected, you can disable this and we
+                          will find the best recipe for you.
+                        </p>
+                      </div>
+                    </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="moment"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel>Moment</FormLabel>
                     <Select onValueChange={field.onChange}>
                       <FormControl>
@@ -269,7 +302,7 @@ export default function Home() {
                 name="cost"
                 defaultValue={0}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel>Cost</FormLabel>
                     <Input
                       type="number"
@@ -288,7 +321,7 @@ export default function Home() {
                 name="complexity"
                 defaultValue={complexity[0].value}
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel>Complexity</FormLabel>
                     <Select onValueChange={field.onChange}>
                       <FormControl>
@@ -318,7 +351,7 @@ export default function Home() {
                 control={form.control}
                 name="tools"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <FormLabel>Tools</FormLabel>
                     <MultipleSelector
                       maxSelected={5}
@@ -345,7 +378,7 @@ export default function Home() {
                 control={form.control}
                 name="hasShaker"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="mt-4">
                     <div className="items-top flex space-x-2 mt-4">
                       <Checkbox
                         id="hasShaker"
@@ -354,7 +387,7 @@ export default function Home() {
                       />
                       <div className="grid gap-1.5 leading-none">
                         <label
-                          htmlFor="terms1"
+                          htmlFor="hasShaker"
                           className={`text-sm font-medium leading-none 
                           peer-disabled:cursor-not-allowed peer-disabled:opacity-70`}
                         >
