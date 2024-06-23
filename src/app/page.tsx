@@ -56,43 +56,10 @@ const FormSchema = z.object({
 type ApiCocktail = Omit<Cocktail, "id">;
 
 export default function Home() {
-  const [cocktail, setCocktail] =
-    useState<ApiCocktail>(/* {
-    name: "Tropical Birthday Fizz",
-    description: `A bold and complex cocktail that combines the flavors of lemon, rum, 
-    and whisky for a unique and sophisticated sipping experience.`,
-    steps: [
-      {
-        index: 1,
-        description:
-          "In a cocktail shaker, muddle the lemon juice, rum, and whisky together until well combined.",
-      },
-      {
-        index: 2,
-        description:
-          "Add ice to the shaker and shake vigorously for 10-15 seconds.",
-      },
-      {
-        index: 3,
-        description: "Strain the mixture into a chilled cocktail glass.",
-      },
-      {
-        index: 4,
-        description: "Top with ginger beer and a splash of simple syrup.",
-      },
-      {
-        index: 5,
-        description: "Garnish with a lemon twist.",
-      },
-    ],
-    is_alcoholic: true,
-    mixers: ["lemon juice", "pineapple juice", "simple syrup", "soda water"],
-    size: "Unknown",
-    cost: 5,
-    complexity: "Medium",
-    required_tools: ["jigger", "strainer", "shaker"],
-    required_ingredients: ["lemon juice", "pineapple juice", "rum"],
-  } */);
+  const [cocktail, setCocktail] = useState<{
+    actual?: ApiCocktail;
+    prev?: ApiCocktail[];
+  }>();
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
@@ -115,6 +82,7 @@ export default function Home() {
       delete body.tools;
       delete body.spirits;
       delete body.hasShaker;
+      delete body.suggestMixers;
 
       const res = await safeFetch<ApiCocktail>({
         input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
@@ -144,7 +112,7 @@ export default function Home() {
 
       idxdb?.cocktails.add(res);
 
-      setCocktail(res);
+      setCocktail({ actual: res });
     } catch (err: unknown) {
       const msg = getErrorMessage(err);
 
@@ -160,15 +128,28 @@ export default function Home() {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: {
+      hasShaker: false,
+      suggestMixers: true,
+    }
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
+    setCocktail(undefined);
     createCocktail(data);
+  }
+
+  function handleResetValues() {
+    setCocktail({
+      actual: undefined,
+      prev: [],
+    });
+    form.reset();
   }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {!cocktail ? (
+      {!cocktail?.actual ? (
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -244,7 +225,7 @@ export default function Home() {
                     <div className="items-top flex space-x-2 mt-4">
                       <Checkbox
                         id="suggestMixers"
-                        defaultChecked={false}
+                        defaultChecked
                         onCheckedChange={field.onChange}
                       />
                       <div className="grid gap-1.5 leading-none">
@@ -356,7 +337,6 @@ export default function Home() {
                     <MultipleSelector
                       maxSelected={5}
                       onChange={(value) => {
-                        console.log(value);
                         field.onChange(value);
                       }}
                       defaultOptions={tools}
@@ -382,7 +362,6 @@ export default function Home() {
                     <div className="items-top flex space-x-2 mt-4">
                       <Checkbox
                         id="hasShaker"
-                        defaultChecked
                         onCheckedChange={field.onChange}
                       />
                       <div className="grid gap-1.5 leading-none">
@@ -421,25 +400,26 @@ export default function Home() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>{cocktail.name}</CardTitle>
-              <CardDescription>{cocktail.description}</CardDescription>
+              <CardTitle>{cocktail.actual.name}</CardTitle>
+              <CardDescription>{cocktail.actual.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>
-                <b>Ingredients:</b> {cocktail.required_ingredients.join(", ")}
+                <b>Ingredients:</b>{" "}
+                {cocktail.actual.required_ingredients.join(", ")}
               </p>
               <p>
-                <b>Mixers:</b> {cocktail.mixers.join(", ")}
+                <b>Mixers:</b> {cocktail.actual.mixers.join(", ")}
               </p>
               <p>
-                <b>Cost:</b> {cocktail.cost}
+                <b>Cost:</b> {cocktail.actual.cost}
               </p>
               <p>
-                <b>Complexity:</b> {cocktail.complexity}
+                <b>Complexity:</b> {cocktail.actual.complexity}
               </p>
-              {cocktail.required_tools ? (
+              {cocktail.actual.required_tools ? (
                 <p>
-                  <b>Tools:</b> {cocktail.required_tools.join(", ")}
+                  <b>Tools:</b> {cocktail.actual.required_tools.join(", ")}
                 </p>
               ) : null}
             </CardContent>
@@ -447,7 +427,7 @@ export default function Home() {
               {/* steps */}
               <ol className="list-decimal list-inside">
                 <h3 className="font-bold">Steps</h3>
-                {cocktail.steps.map((step, index) => (
+                {cocktail.actual.steps.map((step, index) => (
                   <li
                     key={index}
                     className="my-4"
@@ -457,6 +437,12 @@ export default function Home() {
                 ))}
               </ol>
             </CardFooter>
+            <Button
+              onClick={handleResetValues}
+              variant="outline"
+            >
+              Start Over
+            </Button>
           </Card>
         </>
       )}
