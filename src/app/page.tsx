@@ -65,6 +65,15 @@ export default function Home() {
   const { toast } = useToast();
   const { idxdb } = useContext(DepContext);
 
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      hasShaker: false,
+      suggestMixers: true,
+      // complexity: "Medium"
+    },
+  });
+
   async function createCocktail(details: z.infer<typeof FormSchema>) {
     setLoading(true);
     try {
@@ -125,14 +134,6 @@ export default function Home() {
       setLoading(false);
     }
   }
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      hasShaker: false,
-      suggestMixers: true,
-    }
-  });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     setCocktail(undefined);
@@ -300,14 +301,14 @@ export default function Home() {
               <FormField
                 control={form.control}
                 name="complexity"
-                defaultValue={complexity[0].value}
+                defaultValue={complexity[1].value}
                 render={({ field }) => (
                   <FormItem className="mt-4">
                     <FormLabel>Complexity</FormLabel>
                     <Select onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a complexity" />
+                          <SelectValue placeholder={complexity[1].value} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -437,13 +438,14 @@ export default function Home() {
                 ))}
               </ol>
             </CardFooter>
-            <Button
-              onClick={handleResetValues}
-              variant="outline"
-            >
-              Start Over
-            </Button>
           </Card>
+          <Button
+            onClick={handleResetValues}
+            variant="outline"
+            className="w-full mt-4"
+          >
+            Start Over
+          </Button>
         </>
       )}
     </main>
