@@ -52,7 +52,6 @@ export const complexity = [
 ];
 
 export const tools = [
-  { value: 'shaker', label: 'Shaker' },
   { value: 'glass', label: 'Glass' },
   { value: 'jigger', label: 'Jigger' },
   { value: 'muddler', label: 'Muddler' },
