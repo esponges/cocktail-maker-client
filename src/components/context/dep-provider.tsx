@@ -15,7 +15,6 @@ export type Cocktail = {
     description: string;
   }[];
   is_alcoholic: boolean;
-  mixers: string[];
   size: string;
   cost: number;
   complexity: string;

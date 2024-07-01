@@ -108,12 +108,12 @@ export default function Home() {
             z.object({ index: z.string(), description: z.string() })
           ),
           is_alcoholic: z.boolean(),
-          mixers: z.array(z.string()),
           size: z.string(),
           cost: z.number(),
           complexity: z.string(),
           required_ingredients: z.array(z.string()),
           required_tools: z.array(z.string()),
+          base_ingredients: z.array(z.string()),
         }),
       });
 
@@ -408,15 +408,12 @@ export default function Home() {
                 {cocktail.actual.required_ingredients.join(", ")}
               </p>
               <p>
-                <b>Mixers:</b> {cocktail.actual.mixers.join(", ")}
-              </p>
-              <p>
                 <b>Cost:</b> {cocktail.actual.cost}
               </p>
               <p>
                 <b>Complexity:</b> {cocktail.actual.complexity}
               </p>
-              {cocktail.actual.required_tools ? (
+              {cocktail.actual.required_tools?.length ? (
                 <p>
                   <b>Tools:</b> {cocktail.actual.required_tools.join(", ")}
                 </p>
