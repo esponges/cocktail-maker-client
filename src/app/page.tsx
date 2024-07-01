@@ -79,19 +79,17 @@ export default function Home() {
     try {
       const body = {
         ...details,
-        mixers: [
-          ...details.mixers.map((m) => m.value),
-          ...(details.spirits?.map((s) => s.value) || []),
-        ],
+        mixers: details.mixers.map((m) => m.value),
         suggest_mixers: details.suggestMixers,
         required_tools: details.tools?.map((t) => t.value),
         has_shaker: details.hasShaker,
+        base_ingredients: details.spirits?.map((s) => s.value) || [],
       };
 
       delete body.tools;
-      delete body.spirits;
       delete body.hasShaker;
       delete body.suggestMixers;
+      delete body.spirits;
 
       const res = await safeFetch<ApiCocktail>({
         input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,

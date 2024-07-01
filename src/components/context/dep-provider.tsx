@@ -21,6 +21,7 @@ export type Cocktail = {
   complexity: string;
   required_ingredients: string[];
   required_tools?: string[];
+  base_ingredients?: string[];
 };
 
 export const DepContext = createContext<{
@@ -41,7 +42,7 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
   idxdb.version(1).stores({
     cocktails:
       // eslint-disable-next-line max-len
-      "++id, name, description, steps, is_alcoholic, mixers, size, cost, complexity, required_ingredients, required_tools",
+      "++id, name, description, steps, is_alcoholic, mixers, size, cost, complexity, required_ingredients, required_tools, base_ingredients",
   });
 
   return (
