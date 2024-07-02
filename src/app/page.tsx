@@ -38,7 +38,11 @@ import { mixers, spirits, moment, complexity, tools } from "@/lib/form-options";
 import { safeFetch } from "@/lib/safe-fetch";
 import { getErrorMessage } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
-import { DepContext, type Cocktail } from "@/components/context/dep-provider";
+import {
+  DepContext,
+  type Cocktail as ApiCocktailResponse,
+} from "@/components/context/dep-provider";
+import { Modal } from "@/components/ui/modal";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -53,13 +57,29 @@ const FormSchema = z.object({
   hasShaker: z.boolean().optional(),
 });
 
-type ApiCocktail = Omit<Cocktail, "id">;
+type ApiCocktailRequest = {
+  mixers: string[];
+  suggest_mixers?: boolean;
+  size?: string;
+  cost?: number;
+  complexity?: string;
+  required_tools?: string[];
+  previous_recipes?: string[];
+  moment?: string;
+  has_shaker?: boolean;
+  base_ingredients?: string[];
+};
 
 export default function Home() {
   const [cocktail, setCocktail] = useState<{
-    actual?: ApiCocktail;
-    prev?: ApiCocktail[];
+    actual?: ApiCocktailResponse;
+    prev?: ApiCocktailResponse[];
+    prevFormValues?: z.infer<typeof FormSchema>;
+    prevRecipes?: string[];
   }>();
+  const [retry, setRetry] = useState<{
+    modalOpen: boolean;
+  }>({ modalOpen: false });
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
@@ -77,21 +97,20 @@ export default function Home() {
   async function createCocktail(details: z.infer<typeof FormSchema>) {
     setLoading(true);
     try {
-      const body = {
-        ...details,
+      const body: ApiCocktailRequest = {
         mixers: details.mixers.map((m) => m.value),
         suggest_mixers: details.suggestMixers,
+        // size: details.
+        cost: details.cost,
+        complexity: details.complexity,
         required_tools: details.tools?.map((t) => t.value),
+        previous_recipes: cocktail?.prevRecipes || [],
+        moment: details.moment,
         has_shaker: details.hasShaker,
         base_ingredients: details.spirits?.map((s) => s.value) || [],
       };
 
-      delete body.tools;
-      delete body.hasShaker;
-      delete body.suggestMixers;
-      delete body.spirits;
-
-      const res = await safeFetch<ApiCocktail>({
+      const res = await safeFetch<ApiCocktailResponse>({
         input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
         init: {
           method: "POST",
@@ -119,7 +138,11 @@ export default function Home() {
 
       idxdb?.cocktails.add(res);
 
-      setCocktail({ actual: res });
+      setCocktail((prev) => ({
+        actual: res,
+        prevRecipes: [...(prev?.prevRecipes || []), res.id],
+        prevFormValues: form.getValues(),
+      }));
     } catch (err: unknown) {
       const msg = getErrorMessage(err);
 
@@ -139,21 +162,57 @@ export default function Home() {
   }
 
   function handleResetValues() {
-    setCocktail({
+    setCocktail((prev) => ({
+      ...prev,
       actual: undefined,
-      prev: [],
-    });
+    }));
     form.reset();
   }
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const actualValuesAreEqual =
+      JSON.stringify(form.getValues()) ===
+      JSON.stringify(cocktail?.prevFormValues);
+
+    if (actualValuesAreEqual) {
+      setRetry((prev) => ({ ...prev, modalOpen: true }));
+    } else {
+      form.handleSubmit(onSubmit)();
+    }
+  }
+
+  console.log({ cocktail });
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center p-24">
       {!cocktail?.actual ? (
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={handleSubmit}
             className="w-2/3 space-y-6"
           >
+            <Modal
+              isOpen={retry.modalOpen}
+              title="Do you want to retry with the previous values?"
+              onCancel={() => {
+                setRetry((prev) => ({ ...prev, modalOpen: false }));
+                // handleResetValues();
+              }}
+              onSubmit={() => {
+                setRetry((prev) => ({ ...prev, modalOpen: false }));
+                form.handleSubmit(onSubmit)();
+              }}
+              continueBtnProps={{
+                // props: { type: "submit" },
+                label: "Change values",
+              }}
+            >
+              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                Or maybe you want to change some values?
+              </p>
+            </Modal>
             <fieldset disabled={loading}>
               <FormField
                 control={form.control}
