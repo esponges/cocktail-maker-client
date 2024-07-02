@@ -183,8 +183,6 @@ export default function Home() {
     }
   }
 
-  console.log({ cocktail });
-
   return (
     <main className="flex min-h-screen flex-col items-center p-24">
       {!cocktail?.actual ? (
@@ -206,7 +204,7 @@ export default function Home() {
               }}
               continueBtnProps={{
                 // props: { type: "submit" },
-                label: "Change values",
+                label: "Retry with the same values",
               }}
             >
               <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">

@@ -32,6 +32,7 @@ export function Modal({
   onClose,
   className,
   onSubmit,
+  onCancel,
   continueBtnProps,
 }: Props) {
   return (
@@ -45,7 +46,7 @@ export function Modal({
           <AlertDialogDescription>{children}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onSubmit}
             {...continueBtnProps?.props}
