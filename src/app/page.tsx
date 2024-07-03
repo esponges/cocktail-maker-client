@@ -94,7 +94,7 @@ export default function Home() {
     },
   });
 
-  async function createCocktail(details: z.infer<typeof FormSchema>) {
+  async function createCocktail(details: z.infer<typeof FormSchema>, isRetry: boolean) {
     setLoading(true);
     try {
       const body: ApiCocktailRequest = {
@@ -104,10 +104,10 @@ export default function Home() {
         cost: details.cost,
         complexity: details.complexity,
         required_tools: details.tools?.map((t) => t.value),
-        previous_recipes: cocktail?.prevRecipes || [],
         moment: details.moment,
         has_shaker: details.hasShaker,
         base_ingredients: details.spirits?.map((s) => s.value) || [],
+        ...(isRetry && { previous_recipes: cocktail?.prevRecipes || [] }),
       };
 
       const res = await safeFetch<ApiCocktailResponse>({
@@ -156,9 +156,8 @@ export default function Home() {
     }
   }
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    setCocktail(undefined);
-    createCocktail(data);
+  function onSubmit(data: z.infer<typeof FormSchema>, isRetry: boolean) {
+    createCocktail(data, isRetry);
   }
 
   function handleResetValues() {
@@ -179,7 +178,7 @@ export default function Home() {
     if (actualValuesAreEqual) {
       setRetry((prev) => ({ ...prev, modalOpen: true }));
     } else {
-      form.handleSubmit(onSubmit)();
+      form.handleSubmit((vals) => onSubmit(vals, false))();
     }
   }
 
@@ -196,18 +195,16 @@ export default function Home() {
               title="Do you want to retry with the previous values?"
               onCancel={() => {
                 setRetry((prev) => ({ ...prev, modalOpen: false }));
-                // handleResetValues();
               }}
               onSubmit={() => {
                 setRetry((prev) => ({ ...prev, modalOpen: false }));
-                form.handleSubmit(onSubmit)();
+                form.handleSubmit((vals) => onSubmit(vals, true))();
               }}
               continueBtnProps={{
-                // props: { type: "submit" },
                 label: "Retry with the same values",
               }}
             >
-              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+              <p>
                 Or maybe you want to change some values?
               </p>
             </Modal>
