@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext } from "react";
+import { createContext, useRef } from "react";
 import Dexie, { type EntityTable } from "dexie";
 
 import { Toaster } from "../ui/toaster";
@@ -30,6 +30,9 @@ export const DepContext = createContext<{
       "id" // primary key "id" (for the typings only)
     >;
   };
+  refs?: {
+    form: React.RefObject<HTMLFormElement>;
+  }
   // more dependency clients can be added here
 }>({});
 
@@ -37,6 +40,11 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
   const idxdb = new Dexie("cocktail_maker") as Dexie & {
     cocktails: EntityTable<Cocktail, "id">;
   };
+  const formRef = useRef<HTMLFormElement>(null);
+  const refs = {
+    form: formRef,
+  };
+
 
   idxdb.version(1).stores({
     cocktails:
@@ -47,7 +55,7 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Toaster />
-      <DepContext.Provider value={{ idxdb }}>{children}</DepContext.Provider>
+      <DepContext.Provider value={{ idxdb, refs }}>{children}</DepContext.Provider>
     </>
   );
 }

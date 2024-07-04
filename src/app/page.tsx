@@ -59,7 +59,7 @@ export default function Home() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const { toast } = useToast();
-  const { idxdb } = useContext(DepContext);
+  const { idxdb, refs } = useContext(DepContext);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -161,7 +161,7 @@ export default function Home() {
   }
 
   function scrollSmoothToForm() {
-    formRef.current?.scrollIntoView({ behavior: "smooth" });
+    refs?.form.current?.scrollIntoView({ behavior: "smooth" });
   }
 
   return (
@@ -171,8 +171,8 @@ export default function Home() {
       </section>
       <section
         id="form"
-        className="flex min-h-screen flex-col items-center p-24"
-        ref={formRef}
+        className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-10"
+        ref={refs?.form}
       >
         {!cocktail?.actual ? (
           <Form {...form}>

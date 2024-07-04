@@ -15,7 +15,7 @@ export function Hero({ onCTAClick }: Props) {
           className="w-full h-full object-cover opacity-20"
         />
       </div>
-      <div className="relative container h-[50rem] mx-auto px-6 py-20 md:py-32 flex flex-col justify-center min-h-[400px]">
+      <div className="relative container md:h-[55rem] h-screen mx-auto px-6 py-20 md:py-32 flex flex-col justify-center min-h-[400px]">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Shake Up Your Night with AI

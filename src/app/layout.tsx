@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 
 import "./globals.css";
 import { DepProvider } from "@/components/context/dep-provider";
+import { Footer } from "@/components/ui/footer";
+import Header from "@/components/ui/header";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -30,7 +32,11 @@ export default function RootLayout({
           fontSans.className
         )}
       >
-        <DepProvider>{children}</DepProvider>
+        <DepProvider>
+          <Header />
+          {children}
+        </DepProvider>
+        <Footer />
       </body>
     </html>
   );
