@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useRef } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,6 +56,7 @@ export default function Home() {
     modalOpen: boolean;
   }>({ modalOpen: false });
   const [loading, setLoading] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const { toast } = useToast();
   const { idxdb } = useContext(DepContext);
@@ -159,14 +160,19 @@ export default function Home() {
     }
   }
 
+  function scrollSmoothToForm() {
+    formRef.current?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
     <main>
       <section id="hero">
-        <Hero />
+        <Hero onCTAClick={scrollSmoothToForm} />
       </section>
       <section
         id="form"
         className="flex min-h-screen flex-col items-center p-24"
+        ref={formRef}
       >
         {!cocktail?.actual ? (
           <Form {...form}>
