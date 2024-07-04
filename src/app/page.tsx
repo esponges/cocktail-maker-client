@@ -17,6 +17,7 @@ import {
 import { Modal } from "@/components/ui/modal";
 import { CreateCocktailForm } from "@/components/pages/CreateCocktailForm";
 import { CocktailCard } from "@/components/pages/CocktailCard";
+import { Hero } from "@/components/pages/Hero";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -159,47 +160,55 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-24">
-      {!cocktail?.actual ? (
-        <Form {...form}>
-          <form
-            onSubmit={handleSubmit}
-            className="w-2/3 space-y-6"
-          >
-            <Modal
-              isOpen={retry.modalOpen}
-              title="Do you want to retry with the previous values?"
-              onCancel={() => {
-                setRetry((prev) => ({ ...prev, modalOpen: false }));
-              }}
-              onSubmit={() => {
-                setRetry((prev) => ({ ...prev, modalOpen: false }));
-                form.handleSubmit((vals) => onSubmit(vals, true))();
-              }}
-              continueBtnProps={{
-                label: "Retry with the same values",
-              }}
+    <main>
+      <section id="hero">
+        <Hero />
+      </section>
+      <section
+        id="form"
+        className="flex min-h-screen flex-col items-center p-24"
+      >
+        {!cocktail?.actual ? (
+          <Form {...form}>
+            <form
+              onSubmit={handleSubmit}
+              className="w-2/3 space-y-6"
             >
-              <p>Or maybe you want to change some values?</p>
-            </Modal>
-            <CreateCocktailForm
-              control={form.control}
-              isLoading={loading}
-            />
-          </form>
-        </Form>
-      ) : (
-        <>
-          <CocktailCard cocktail={cocktail.actual} />
-          <Button
-            onClick={handleResetValues}
-            variant="outline"
-            className="w-full mt-4"
-          >
-            Start Over
-          </Button>
-        </>
-      )}
+              <Modal
+                isOpen={retry.modalOpen}
+                title="Do you want to retry with the previous values?"
+                onCancel={() => {
+                  setRetry((prev) => ({ ...prev, modalOpen: false }));
+                }}
+                onSubmit={() => {
+                  setRetry((prev) => ({ ...prev, modalOpen: false }));
+                  form.handleSubmit((vals) => onSubmit(vals, true))();
+                }}
+                continueBtnProps={{
+                  label: "Retry with the same values",
+                }}
+              >
+                <p>Or maybe you want to change some values?</p>
+              </Modal>
+              <CreateCocktailForm
+                control={form.control}
+                isLoading={loading}
+              />
+            </form>
+          </Form>
+        ) : (
+          <>
+            <CocktailCard cocktail={cocktail.actual} />
+            <Button
+              onClick={handleResetValues}
+              variant="outline"
+              className="w-full mt-4"
+            >
+              Start Over
+            </Button>
+          </>
+        )}
+      </section>
     </main>
   );
 }
