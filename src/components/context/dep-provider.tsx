@@ -40,9 +40,8 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
   const idxdb = new Dexie("cocktail_maker") as Dexie & {
     cocktails: EntityTable<Cocktail, "id">;
   };
-  const formRef = useRef<HTMLFormElement>(null);
   const refs = {
-    form: formRef,
+    form: useRef<HTMLFormElement>(null),
   };
 
 

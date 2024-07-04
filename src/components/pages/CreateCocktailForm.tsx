@@ -116,7 +116,7 @@ export function CreateCocktailForm({
                   className={`text-sm font-medium leading-none 
                 peer-disabled:cursor-not-allowed peer-disabled:opacity-70`}
                 >
-                  Allow extra mixers?
+                  Suggest extra mixers?
                 </label>
                 <p className="text-sm text-muted-foreground">
                   Some cocktails might require extra mixers for the perfect
@@ -163,7 +163,6 @@ export function CreateCocktailForm({
       <FormField
         control={control}
         name="cost"
-        defaultValue={0}
         render={({ field }) => (
           <FormItem className="mt-4">
             <FormLabel>Cost</FormLabel>
@@ -173,7 +172,7 @@ export function CreateCocktailForm({
               {...field}
             />
             <FormDescription>
-              Optional - The cost of the cocktail
+              Optional - The cost of the cocktail (in USD)
             </FormDescription>
             <FormMessage />
           </FormItem>
@@ -244,6 +243,7 @@ export function CreateCocktailForm({
             <div className="items-top flex space-x-2 mt-4">
               <Checkbox
                 id="hasShaker"
+                defaultChecked
                 onCheckedChange={field.onChange}
               />
               <div className="grid gap-1.5 leading-none">

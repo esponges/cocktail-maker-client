@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useContext, useRef } from "react";
+import { useState, useContext } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,7 +56,6 @@ export default function Home() {
     modalOpen: boolean;
   }>({ modalOpen: false });
   const [loading, setLoading] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
   const { toast } = useToast();
   const { idxdb, refs } = useContext(DepContext);
@@ -64,7 +63,7 @@ export default function Home() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      hasShaker: false,
+      hasShaker: true,
       suggestMixers: true,
     },
   });
@@ -78,7 +77,6 @@ export default function Home() {
       const body: ApiCocktailRequest = {
         mixers: details.mixers.map((m) => m.value),
         suggest_mixers: details.suggestMixers,
-        // size: details.
         cost: details.cost,
         complexity: details.complexity,
         required_tools: details.tools?.map((t) => t.value),
