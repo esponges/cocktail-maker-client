@@ -26,20 +26,30 @@ export function Header() {
 
   return (
     <header
-      className={`bg-gradient-to-r from-purple-600 to-indigo-700 text-white 
-      py-4 px-6 fixed top-0 left-0 right-0 z-10`}
+      className="bg-gradient-to-r from-purple-700 to-indigo-800 text-white py-4 px-6 fixed top-0 left-0 right-0 z-10"
+      role="banner"
     >
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/">
-          <div className="text-2xl font-bold">AI Mixologist</div>
+        <Link
+          href="/"
+          passHref
+          aria-label="AI Mixologist Home"
+          className="text-2xl font-bold hover:text-yellow-400 transition duration-300"
+        >
+          AI Mixologist
         </Link>
-        <nav>
-          <button
-            onClick={() => navigateToSection("form")}
-            className="mx-2 hover:text-yellow-400 transition duration-300"
-          >
-            New Recipe
-          </button>
+        <nav aria-label="Main navigation">
+          <ul className="flex">
+            <li>
+              <button
+                onClick={() => navigateToSection("form")}
+                className={`mx-2 px-3 py-2 hover:text-yellow-400 transition duration-300 rounded 
+                  focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:text-yellow-400`}
+              >
+                New Recipe
+              </button>
+            </li>
+          </ul>
         </nav>
       </div>
     </header>

@@ -164,7 +164,7 @@ export default function Home() {
 
   return (
     <main>
-      <section id="hero">
+      <section id="hero" role="banner">
         <Hero onCTAClick={scrollSmoothToForm} />
       </section>
       <section
