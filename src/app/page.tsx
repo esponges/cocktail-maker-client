@@ -92,7 +92,10 @@ export default function Home() {
           method: "POST",
           body: JSON.stringify(body),
           headers: {
-            ...(!process?.env?.VERCEL_ENV && { "Content-Type": "application/json" }),
+            ...((!process?.env?.VERCEL_ENV ||
+              process.env.NODE_ENV !== "production") && {
+              "Content-Type": "application/json",
+            }),
           },
         },
         schema: z.object({
@@ -144,7 +147,12 @@ export default function Home() {
     form.reset();
   }
 
-  console.log('vercel', process?.env?.VERCEL_ENV);
+  console.log(
+    "vercel",
+    process?.env?.VERCEL_ENV,
+    "node_env",
+    process?.env?.NODE_ENV
+  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -166,7 +174,10 @@ export default function Home() {
 
   return (
     <main>
-      <section id="hero" role="banner">
+      <section
+        id="hero"
+        role="banner"
+      >
         <Hero onCTAClick={scrollSmoothToForm} />
       </section>
       <section
