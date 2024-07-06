@@ -17,7 +17,7 @@ import {
 import { Modal } from "@/components/ui/custom/modal";
 import { CreateCocktailForm } from "@/components/ui/custom/create-cocktail-form";
 import { CocktailCard } from "@/components/ui/custom/cocktail-card";
-import { Hero } from "@/components/ui/custom/Hero";
+import { Hero } from "@/components/ui/custom/hero";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -143,13 +143,6 @@ export default function Home() {
     }));
     form.reset();
   }
-
-  console.log(
-    "vercel",
-    process?.env?.VERCEL_ENV,
-    "node_env",
-    process?.env?.NODE_ENV
-  );
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
