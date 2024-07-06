@@ -1,30 +1,26 @@
 import type z from "zod";
-import axios, { type AxiosRequestConfig } from "axios";
 
 export async function safeFetch<T>({
   url,
   init,
   schema,
 }: {
-  url: string;
-  init?: AxiosRequestConfig;
+  url: RequestInfo;
+  init?: RequestInit;
   schema: z.ZodType<T>;
   parseJson?: boolean;
 }): Promise<T> {
-  // const response = await fetch(input, init);
+  const response = await fetch(url, init);
 
-  const response = await axios
-    .request({ url, ...init })
-    .then((res) => res.data)
-    .catch((err) => {
-      throw newHTTPError(err.message, err.response, init?.method);
-    });
+  if (!response.ok) {
+    throw newHTTPError("Request failed", response, init?.method);
+  }
 
-  // const json = await response.json().catch(() => {
-  //   throw newHTTPError("Invalid JSON", response, init?.method);
-  // });
+  const json = await response.json().catch(() => {
+    throw newHTTPError("Invalid JSON", response, init?.method);
+  });
 
-  const result = schema.safeParse(response);
+  const result = schema.safeParse(json);
 
   if (!result.success) {
     throw newHTTPError("Invalid response schema", response, init?.method);
@@ -45,7 +41,10 @@ function newHTTPError(reason: string, response: Response, method?: string) {
 }
 
 export class HTTPError extends Error {
-  constructor(public status: number, message: string) {
+  constructor(
+    public status: number,
+    message: string,
+  ) {
     super(message);
     this.status = status;
   }

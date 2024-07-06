@@ -90,12 +90,9 @@ export default function Home() {
         url: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
         init: {
           method: "POST",
-          data: JSON.stringify(body),
+          body: JSON.stringify(body),
           headers: {
-            // ...((!process?.env?.VERCEL_ENV ||
-              // process.env.NODE_ENV !== "production") && {
-              "Content-Type": "application/json",
-            // }),
+            "Content-Type": "application/json",
           },
         },
         schema: z.object({
