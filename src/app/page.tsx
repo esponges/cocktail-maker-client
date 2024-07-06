@@ -87,15 +87,15 @@ export default function Home() {
       };
 
       const res = await safeFetch<ApiCocktailResponse>({
-        input: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
+        url: `${process.env.NEXT_PUBLIC_API_URL}/cocktail/create`,
         init: {
           method: "POST",
-          body: JSON.stringify(body),
+          data: JSON.stringify(body),
           headers: {
-            ...((!process?.env?.VERCEL_ENV ||
-              process.env.NODE_ENV !== "production") && {
+            // ...((!process?.env?.VERCEL_ENV ||
+              // process.env.NODE_ENV !== "production") && {
               "Content-Type": "application/json",
-            }),
+            // }),
           },
         },
         schema: z.object({
