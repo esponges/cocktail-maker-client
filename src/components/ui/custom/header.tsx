@@ -1,7 +1,7 @@
 "use client";
 
 import { useContext } from "react";
-import { DepContext } from "../context/dep-provider";
+import { DepContext } from "../../context/dep-provider";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 

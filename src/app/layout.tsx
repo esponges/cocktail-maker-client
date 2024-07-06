@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import "./globals.css";
 import { DepProvider } from "@/components/context/dep-provider";
 import { Footer } from "@/components/ui/footer";
-import Header from "@/components/ui/header";
+import Header from "@/components/ui/custom/header";
 
 const fontSans = FontSans({
   subsets: ["latin"],
