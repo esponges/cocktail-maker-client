@@ -92,7 +92,7 @@ export default function Home() {
           method: "POST",
           body: JSON.stringify(body),
           headers: {
-            "Content-Type": "application/json",
+            ...(!process?.env?.VERCEL_ENV && { "Content-Type": "application/json" }),
           },
         },
         schema: z.object({
@@ -143,6 +143,8 @@ export default function Home() {
     }));
     form.reset();
   }
+
+  console.log('vercel', process?.env?.VERCEL_ENV);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
