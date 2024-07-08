@@ -38,10 +38,7 @@ type Props = {
   isLoading: boolean;
 };
 
-export function CreateCocktailForm({
-  control,
-  isLoading,
-}: Props) {
+export function CreateCocktailForm({ control, isLoading }: Props) {
   return (
     <fieldset disabled={isLoading}>
       <FormField
@@ -211,32 +208,6 @@ export function CreateCocktailForm({
       />
       <FormField
         control={control}
-        name="tools"
-        render={({ field }) => (
-          <FormItem className="mt-4">
-            <FormLabel>Tools</FormLabel>
-            <MultipleSelector
-              maxSelected={5}
-              onChange={(value) => {
-                field.onChange(value);
-              }}
-              defaultOptions={tools}
-              placeholder="Select tools..."
-              emptyIndicator={
-                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                  no results found.
-                </p>
-              }
-            />
-            <FormDescription>
-              Optional - Select up to 5 tools that you want to use
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={control}
         name="hasShaker"
         render={({ field }) => (
           <FormItem className="mt-4">
@@ -261,6 +232,32 @@ export function CreateCocktailForm({
                 </p>
               </div>
             </div>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name="tools"
+        render={({ field }) => (
+          <FormItem className="mt-4">
+            <FormLabel>Other tools</FormLabel>
+            <MultipleSelector
+              maxSelected={5}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
+              defaultOptions={tools}
+              placeholder="Select other tools..."
+              emptyIndicator={
+                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                  no results found.
+                </p>
+              }
+            />
+            <FormDescription>
+              Optional - Select up to 5 other tools (besides a shaker) that you want to use
+            </FormDescription>
             <FormMessage />
           </FormItem>
         )}
