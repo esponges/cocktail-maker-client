@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef } from "react";
 import Dexie, { type EntityTable } from "dexie";
 
 import { Toaster } from "../ui/toaster";
@@ -52,34 +52,27 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
     form: useRef<HTMLFormElement>(null),
   };
 
-  // using a websocket to spin up the server until we get a persistent server
-  const [ws, setWebsocket] = useState(null as WebSocket | null);
-  const join = (uuid: string) => {
-    const URL = `${process.env.NEXT_PUBLIC_WS_URL}/${uuid}`;
-
-    setWebsocket(() => {
-      const webSocket = new WebSocket(URL);
-
-      webSocket.onmessage = (_e) => {
-        // console.log(e.data);
-      };
-      webSocket.onclose = () => {
-        console.log("Connection Closed");
-      };
-
-      return webSocket;
-    });
-  };
-
+  // wake up server in case it's been spun down by Render.io
   useEffect(() => {
-    if (!ws) {
-      join(crypto.randomUUID());
+    async function wakeUpServer() {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/home/health`, {
+        method: "GET",
+      }).catch((err) => {
+        // fire-and-forget strategy
+        // don't wait for the response but catch any errors
+        console.error("Error calling wakeUpServer", err);
+      });
     }
+    
+    wakeUpServer();
 
-    return () => {
-      ws?.close();
-    };
-  }, [ws]);
+    // keep server awake
+    const interval = setInterval(() => {
+      wakeUpServer();
+    }, 1000 * 60 * 5);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
