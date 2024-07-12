@@ -45,6 +45,32 @@ type ApiCocktailRequest = {
   base_ingredients?: string[];
 };
 
+// function for adding a `<span>` to a word from a string
+// Pour your cocktail -> <span>Pour</span> your cocktail
+function wrapKeywords(text: string) {
+  const keywords = ['pour', 'strain', 'top off', 'shake', 'muggle', 'garnish'];
+
+  const keywordMap = new Map(keywords.map((k) => [k.toLowerCase(), k]));
+
+  const regex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
+
+  return text.replace(regex, (match) => {
+    const keyword = keywordMap.get(match.toLowerCase());
+    const id = keyword ? keyword.replaceAll(" ", "-").toLowerCase() : match; // First letter of the first word
+    
+    return `<span id="${id}">${match}</span>`;
+  });
+}
+
+function wrapSteps(steps: ApiCocktailResponse["steps"]) {
+  return steps.map((step) => {
+    return {
+      ...step,
+      description: wrapKeywords(step.description),
+    };
+  });
+}
+
 export default function Home() {
   const [cocktail, setCocktail] = useState<{
     actual?: ApiCocktailResponse;
@@ -114,8 +140,14 @@ export default function Home() {
 
       idxdb?.cocktails.add(res);
 
+      const parsedSteps = wrapSteps(res.steps);
+      const response = {
+        ...res,
+        steps: parsedSteps,
+      };
+
       setCocktail((prev) => ({
-        actual: res,
+        actual: response,
         prevRecipes: [...(prev?.prevRecipes || []), res.id],
         prevFormValues: form.getValues(),
       }));
