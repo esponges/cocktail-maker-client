@@ -45,10 +45,24 @@ type ApiCocktailRequest = {
   base_ingredients?: string[];
 };
 
-// function for adding a `<span>` to a word from a string
-// Pour your cocktail -> <span>Pour</span> your cocktail
+
+/**
+ * Wraps keywords in the text with <span> tags.
+ *
+ * @param {string} text - The text to search for keywords.
+ * @return {string} The text with keywords wrapped in <span> tags.
+ */
 function wrapKeywords(text: string) {
-  const keywords = ['pour', 'strain', 'top off', 'shake', 'muggle', 'garnish'];
+  const keywords = [
+    "pour",
+    "strain",
+    "top off",
+    "shake",
+    "muggle",
+    "garnish",
+    "fill",
+    "serve",
+  ];
 
   const keywordMap = new Map(keywords.map((k) => [k.toLowerCase(), k]));
 
@@ -57,7 +71,7 @@ function wrapKeywords(text: string) {
   return text.replace(regex, (match) => {
     const keyword = keywordMap.get(match.toLowerCase());
     const id = keyword ? keyword.replaceAll(" ", "-").toLowerCase() : match; // First letter of the first word
-    
+
     return `<span id="${id}">${match}</span>`;
   });
 }
