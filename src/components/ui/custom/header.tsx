@@ -29,6 +29,10 @@ export function Header() {
   useEffect(() => {
     const headerRefCurrent = headerRef.current;
 
+    /* 
+      TODO: this observer will only hide/show the header using the top placeholder
+      make the header hide when scrolling down and show when scrolling up
+    */
     const observer = new IntersectionObserver(
       ([entry]) => {
         // when the absolute placeholder gets in or out of view
