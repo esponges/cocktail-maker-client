@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -8,13 +9,11 @@ import {
 } from "@/components/ui/card";
 
 import type { Cocktail } from "../../context/dep-provider";
-import { useMemo } from "react";
 
 type Props = {
   cocktail: Cocktail;
 };
 
-// todo: implement the real tooltip
 const Tooltip = ({
   children,
   word,
@@ -30,59 +29,67 @@ const Tooltip = ({
   </span>
 );
 
-/**
- * Parses the given HTML string, replaces spans with custom react element, and returns an array of elements.
- *
- * @param {string} htmlString - The HTML string to parse and replace spans.
- * @return {React.ReactNode[]} An array of elements with custom react element replacing spans.
- */
-function parseAndReplaceSpans(htmlString: string) {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlString, "text/html");
-  const spans = doc.body.querySelectorAll("span");
+function wrapKeywordsWithTooltip(text: string): React.ReactNode[] {
+  const keywords = [
+    "pour",
+    "strain",
+    "top off",
+    "shake",
+    "muggle",
+    "garnish",
+    "fill",
+    "serve",
+  ];
 
+  const keywordMap = new Map(keywords.map((k) => [k.toLowerCase(), k]));
+  const regex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
+
+  const parts: React.ReactNode[] = [];
   let lastIndex = 0;
-  const elements = [];
+  let match;
 
-  spans.forEach((span, index) => {
-    const textBefore = htmlString.substring(
-      lastIndex,
-      htmlString.indexOf(span.outerHTML, lastIndex)
-    );
-
-    if (textBefore) {
-      elements.push(textBefore);
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
     }
 
-    elements.push(
+    const keyword = keywordMap.get(match[0].toLowerCase()) || match[0];
+    const id = keyword.replaceAll(" ", "-").toLowerCase();
+
+    parts.push(
       <Tooltip
-        key={index}
-        word={span.id}
+        key={`${id}-${match.index}`}
+        word={keyword}
       >
-        {span.textContent}
+        {match[0]}
       </Tooltip>
     );
 
-    lastIndex =
-      htmlString.indexOf(span.outerHTML, lastIndex) + span.outerHTML.length;
-  });
-
-  if (lastIndex < htmlString.length) {
-    elements.push(htmlString.substring(lastIndex));
+    lastIndex = regex.lastIndex;
   }
 
-  return elements;
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts;
+}
+
+function wrapSteps(steps: Cocktail["steps"]) {
+  return steps.map((step) => ({
+    ...step,
+    description: wrapKeywordsWithTooltip(step.description),
+  }));
 }
 
 export function CocktailCard({ cocktail }: Props) {
   const parsedSteps = useMemo(() => {
-    return cocktail.steps.map((step) => {
+    const steps = wrapSteps(cocktail.steps);
+
+    return steps.map((step) => {
       return (
-        <li
-          key={step.description}
-          className="my-4"
-        >
-          {parseAndReplaceSpans(step.description)}
+        <li key={step.index} className="my-4">
+          {step.description}
         </li>
       );
     });

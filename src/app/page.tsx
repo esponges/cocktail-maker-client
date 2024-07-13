@@ -45,46 +45,6 @@ type ApiCocktailRequest = {
   base_ingredients?: string[];
 };
 
-
-/**
- * Wraps keywords in the text with <span> tags.
- *
- * @param {string} text - The text to search for keywords.
- * @return {string} The text with keywords wrapped in <span> tags.
- */
-function wrapKeywords(text: string) {
-  const keywords = [
-    "pour",
-    "strain",
-    "top off",
-    "shake",
-    "muggle",
-    "garnish",
-    "fill",
-    "serve",
-  ];
-
-  const keywordMap = new Map(keywords.map((k) => [k.toLowerCase(), k]));
-
-  const regex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
-
-  return text.replace(regex, (match) => {
-    const keyword = keywordMap.get(match.toLowerCase());
-    const id = keyword ? keyword.replaceAll(" ", "-").toLowerCase() : match; // First letter of the first word
-
-    return `<span id="${id}">${match}</span>`;
-  });
-}
-
-function wrapSteps(steps: ApiCocktailResponse["steps"]) {
-  return steps.map((step) => {
-    return {
-      ...step,
-      description: wrapKeywords(step.description),
-    };
-  });
-}
-
 export default function Home() {
   const [cocktail, setCocktail] = useState<{
     actual?: ApiCocktailResponse;
@@ -154,14 +114,8 @@ export default function Home() {
 
       idxdb?.cocktails.add(res);
 
-      const parsedSteps = wrapSteps(res.steps);
-      const response = {
-        ...res,
-        steps: parsedSteps,
-      };
-
       setCocktail((prev) => ({
-        actual: response,
+        actual: res,
         prevRecipes: [...(prev?.prevRecipes || []), res.id],
         prevFormValues: form.getValues(),
       }));
