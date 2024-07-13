@@ -46,12 +46,12 @@ export function Modal({
           <AlertDialogDescription>{children}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          {onCancel ? <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel> : null}
           <AlertDialogAction
             onClick={onSubmit}
             {...continueBtnProps?.props}
           >
-            {continueBtnProps?.label}
+            {continueBtnProps?.label || 'Ok'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

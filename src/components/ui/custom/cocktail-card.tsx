@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,9 +9,51 @@ import {
 } from "@/components/ui/card";
 
 import type { Cocktail } from "../../context/dep-provider";
+import { Modal } from "./modal";
+import Image from "next/image";
 
-type Props = {
-  cocktail: Cocktail;
+type Tip = {
+  keyword: string;
+  videoUrl?: string;
+  text?: string;
+  imageUrl?: string;
+};
+
+const tips: Record<string, Tip> = {
+  pour: {
+    keyword: "pour",
+    text: "Pour into a cup or highball glass",
+  },
+  strain: {
+    keyword: "strain",
+    text: "Strain into a cocktail glass",
+  },
+  top: {
+    keyword: "top",
+    text: "Top with ice",
+  },
+  shake: {
+    keyword: "shake",
+    text: "Shake with ice",
+    videoUrl:
+      "https://www.youtube.com/watch?v=VRhQKnvli14&ab_channel=Liquor.com",
+  },
+  muggle: {
+    keyword: "muggle",
+    text: "Muddle with ice",
+  },
+  garnish: {
+    keyword: "garnish",
+    text: "Garnish with a slice of lemon",
+  },
+  fill: {
+    keyword: "fill",
+    text: "Fill with ice",
+  },
+  serve: {
+    keyword: "serve",
+    text: "Serve with ice",
+  },
 };
 
 const Tooltip = ({
@@ -20,14 +62,55 @@ const Tooltip = ({
 }: {
   children: React.ReactNode;
   word: string;
-}) => (
-  <span
-    style={{ textDecoration: "underline", cursor: "help" }}
-    title={`Tool: ${word}`}
-  >
-    {children}
-  </span>
-);
+}) => {
+  const [modal, openModal] = useState<{ open: boolean; data?: Tip }>({
+    open: false,
+  });
+  const handleClick = (keyword: string) => {
+    openModal({ open: true, data: tips[keyword] });
+  };
+
+  return (
+    <>
+      <Modal
+        isOpen={modal.open}
+        onClose={() => openModal({ open: false })}
+        title={modal.data?.keyword}
+      >
+        <div>
+          {modal.data?.text ? <p>{modal.data?.text}</p> : null}
+          {modal.data?.imageUrl ? (
+            <Image
+              src={modal.data?.imageUrl}
+              alt={modal.data?.keyword}
+              width={200}
+              height={200}
+            />
+          ) : null}
+          {modal.data?.videoUrl ? (
+            <iframe
+              width="560"
+              height="315"
+              src={modal.data?.videoUrl}
+              title="YouTube video player"
+              allow={`accelerometer; autoplay; clipboard-write; 
+                encrypted-media; gyroscope; picture-in-picture; web-share
+                `}
+              allowFullScreen
+            ></iframe>
+          ) : null}
+        </div>
+      </Modal>
+      <span
+        onClick={() => handleClick(word)}
+        className="underline cursor-help"
+        title={`Tool: ${word}`}
+      >
+        {children}
+      </span>
+    </>
+  );
+};
 
 function wrapKeywordsWithTooltip(text: string): React.ReactNode[] {
   const keywords = [
@@ -82,13 +165,16 @@ function wrapSteps(steps: Cocktail["steps"]) {
   }));
 }
 
-export function CocktailCard({ cocktail }: Props) {
+export function CocktailCard({ cocktail }: { cocktail: Cocktail }) {
   const parsedSteps = useMemo(() => {
     const steps = wrapSteps(cocktail.steps);
 
     return steps.map((step) => {
       return (
-        <li key={step.index} className="my-4">
+        <li
+          key={step.index}
+          className="my-4"
+        >
           {step.description}
         </li>
       );
