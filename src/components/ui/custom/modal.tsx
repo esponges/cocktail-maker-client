@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { type AlertDialogActionProps } from "@radix-ui/react-alert-dialog";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 
 type Props = {
   isOpen: boolean;
@@ -36,7 +36,6 @@ export function Modal({
   onCancel,
   continueBtnProps,
 }: Props) {
-  const ref = useRef<HTMLDivElement>(null);
 
   const checkOutsideClick = useCallback(
     (e: MouseEvent) => {
@@ -69,7 +68,6 @@ export function Modal({
     >
       <AlertDialogContent
         className={className}
-        ref={ref}
       >
         <AlertDialogHeader>
           {title ? <AlertDialogTitle>{title}</AlertDialogTitle> : null}

@@ -36,7 +36,7 @@ const tips: Record<string, Tip> = {
     keyword: "shake",
     text: "Shake with ice",
     videoUrl:
-      "https://www.youtube.com/watch?v=VRhQKnvli14&ab_channel=Liquor.com",
+      "https://www.youtube.com/embed/VRhQKnvli14?si=aIeY0o4tzzDtPTef",
   },
   muggle: {
     keyword: "muggle",
@@ -89,9 +89,8 @@ const Tooltip = ({
           ) : null}
           {modal.data?.videoUrl ? (
             <iframe
-              width="560"
-              height="315"
               src={modal.data?.videoUrl}
+              className="w-full h-full"
               title="YouTube video player"
               allow={`accelerometer; autoplay; clipboard-write; 
                 encrypted-media; gyroscope; picture-in-picture; web-share
