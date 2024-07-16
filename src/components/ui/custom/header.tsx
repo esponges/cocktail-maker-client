@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useContext, useEffect, useRef, useState } from "react";
 import { DepContext } from "../../context/dep-provider";
 import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
 
 export function Header() {
   const path = usePathname();
@@ -13,17 +13,17 @@ export function Header() {
   const headerRef = useRef<HTMLDivElement>(null);
 
   function navigateToSection(section: "form") {
-    if (path === "/") {
-      if (!refs) return;
-
-      const element = refs[section]?.current;
-
-      if (!element) return;
-
-      element.scrollIntoView({ behavior: "smooth" });
-    } else {
+    if (path !== "/") {
       router.push("/");
     }
+
+    if (!refs) return;
+
+    const element = refs[section]?.current;
+
+    if (!element) return;
+
+    element.scrollIntoView({ behavior: "smooth" });
   }
 
   useEffect(() => {
@@ -89,6 +89,17 @@ export function Header() {
                 >
                   New Recipe
                 </button>
+              </li>
+            </ul>
+            <ul className="flex">
+              <li>
+                <Link
+                  href="/account/cocktails"
+                  className={`mx-2 px-3 py-2 hover:text-yellow-400 transition duration-300 rounded 
+                  focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:text-yellow-400`}
+                >
+                  Previous
+                </Link>
               </li>
             </ul>
           </nav>

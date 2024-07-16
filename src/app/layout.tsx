@@ -35,9 +35,7 @@ export default function RootLayout({
         <DepProvider>
           <Header />
           {/* TODO: offset header */}
-          <div>
-            {children}
-          </div>
+          {children}
         </DepProvider>
         <Footer />
       </body>
