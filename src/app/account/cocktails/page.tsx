@@ -23,8 +23,8 @@ export default function AccountCocktails() {
   }, [idxdb]);
 
   return (
-    <main>
-      <h1>Account Cocktails</h1>
+    <main className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-10">
+      <h1 className="text-3xl">Previous Cocktails</h1>
       <Accordion
         type="single"
         collapsible
