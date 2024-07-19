@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { DepContext } from "../../context/dep-provider";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -10,9 +10,11 @@ export function Header() {
   const router = useRouter();
 
   const [isVisible, setIsVisible] = useState(true);
-
+  
+  // we only use this to determine if the header should be visible - not necessary to be in the context
   const { refs } = useContext(DepContext);
   const headerRef = refs?.header;
+  const observerRef = useRef<HTMLDivElement>(null);
 
   function navigateToSection(section: "form") {
     if (path !== "/") {
@@ -29,9 +31,9 @@ export function Header() {
   }
 
   useEffect(() => {
-    if (!headerRef) return;
+    if (!observerRef) return;
 
-    const headerRefCurrent = headerRef.current;
+    const observerRefCurrent = observerRef.current;
 
     /* 
       TODO: this observer will only hide/show the header using the top placeholder
@@ -46,24 +48,25 @@ export function Header() {
       {
         root: null,
         rootMargin: "0px",
-        threshold: 0.5,
+        threshold: 1,
       }
     );
 
-    if (headerRefCurrent) {
-      observer.observe(headerRefCurrent);
+    if (observerRefCurrent) {
+      observer.observe(observerRefCurrent);
     }
 
     return () => {
-      if (headerRefCurrent) {
-        observer.unobserve(headerRefCurrent);
+      if (observerRefCurrent) {
+        observer.unobserve(observerRefCurrent);
       }
     };
-  }, [headerRef]);
+  }, [observerRef]);
 
   return (
     <>
       <div
+        ref={observerRef}
         className="absolute top-0 h-1"
         />
       <header
