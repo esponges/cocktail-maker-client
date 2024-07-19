@@ -19,6 +19,7 @@ import { CreateCocktailForm } from "@/components/ui/custom/create-cocktail-form"
 import { CocktailCard } from "@/components/ui/custom/cocktail-card";
 import { Hero } from "@/components/ui/custom/hero";
 import { Container } from "@/components/ui/custom/container";
+import { useHeaderHeight } from "@/lib/hooks/misc";
 
 const FormSchema = z.object({
   mixers: z.array(z.object({ value: z.string(), label: z.string() })),
@@ -59,6 +60,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   const { toast } = useToast();
+  const { headerHeight } = useHeaderHeight();
   const { idxdb, refs } = useContext(DepContext);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -168,10 +170,11 @@ export default function Home() {
       <section
         id="hero"
         role="banner"
+        style={{ marginTop: headerHeight ? `${headerHeight}px` : "10rem" }}
       >
         <Hero onCTAClick={scrollSmoothToForm} />
       </section>
-      <Container>
+      <Container offsetHeader={false}>
         <section
           id="form"
           className="flex min-h-screen flex-col items-center md:p-24 p-2"
