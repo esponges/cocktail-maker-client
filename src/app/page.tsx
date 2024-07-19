@@ -162,8 +162,10 @@ export default function Home() {
     refs?.form.current?.scrollIntoView({ behavior: "smooth" });
   }
 
+  const headerHeight = refs?.header.current?.offsetHeight;
+
   return (
-    <main>
+    <main style={{ marginTop: headerHeight ? `${headerHeight}px` : "10rem" }}>
       <section
         id="hero"
         role="banner"
@@ -172,7 +174,7 @@ export default function Home() {
       </section>
       <section
         id="form"
-        className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-10"
+        className="flex min-h-screen flex-col items-center md:p-24 p-2"
         ref={refs?.form}
       >
         {!cocktail?.actual ? (

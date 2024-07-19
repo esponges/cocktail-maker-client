@@ -75,7 +75,7 @@ export default function AccountCocktails() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-10">
+    <main className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-12 md:mt-6">
       <h1 className="text-3xl">Previous Cocktails</h1>
       <Modal
         isOpen={deleteModal.open}

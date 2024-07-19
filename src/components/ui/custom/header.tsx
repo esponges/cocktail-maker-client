@@ -1,16 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DepContext } from "../../context/dep-provider";
 import { usePathname, useRouter } from "next/navigation";
 
 export function Header() {
   const path = usePathname();
   const router = useRouter();
-  const { refs } = useContext(DepContext);
+
   const [isVisible, setIsVisible] = useState(true);
-  const headerRef = useRef<HTMLDivElement>(null);
+
+  const { refs } = useContext(DepContext);
+  const headerRef = refs?.header;
 
   function navigateToSection(section: "form") {
     if (path !== "/") {
@@ -27,6 +29,8 @@ export function Header() {
   }
 
   useEffect(() => {
+    if (!headerRef) return;
+
     const headerRefCurrent = headerRef.current;
 
     /* 
@@ -55,19 +59,20 @@ export function Header() {
         observer.unobserve(headerRefCurrent);
       }
     };
-  }, []);
+  }, [headerRef]);
 
   return (
     <>
       <div
-        ref={headerRef}
         className="absolute top-0 h-1"
-      />
+        />
       <header
+        ref={headerRef}
         className={`bg-gradient-to-r from-purple-700 to-indigo-800 text-white 
-        py-4 px-6 fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
+          py-4 px-6 fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ${
+            isVisible ? "translate-y-0" : "-translate-y-full"
+          }`}
+        id="main-header"
         role="banner"
       >
         <div className="container mx-auto flex justify-between items-center">

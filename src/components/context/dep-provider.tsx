@@ -32,6 +32,7 @@ export const DepContext = createContext<{
   };
   refs?: {
     form: React.RefObject<HTMLFormElement>;
+    header: React.RefObject<HTMLDivElement>;
   };
   // more dependency clients can be added here
 }>({});
@@ -50,6 +51,7 @@ export function DepProvider({ children }: { children: React.ReactNode }) {
   // refs for navigation
   const refs = {
     form: useRef<HTMLFormElement>(null),
+    header: useRef<HTMLDivElement>(null),
   };
 
   // wake up server in case it's been spun down by Render.io
