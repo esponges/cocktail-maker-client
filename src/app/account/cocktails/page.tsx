@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/accordion";
 import { CocktailCard } from "@/components/ui/custom/cocktail-card";
 import { Modal } from "@/components/ui/custom/modal";
+import { Container } from "@/components/ui/custom/container";
 
 function TrashIcon({ onClick }: { onClick: () => void }) {
   return (
@@ -75,45 +76,47 @@ export default function AccountCocktails() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center md:p-24 p-2 mt-12 md:mt-6">
-      <h1 className="text-3xl">Previous Cocktails</h1>
-      <Modal
-        isOpen={deleteModal.open}
-        title="Are you sure you want to delete this cocktail?"
-        onClose={handleDeleteModalClose}
-        onSubmit={() => {
-          if (!deleteModal.cocktail) return;
-          handleDeleteRecord(deleteModal.cocktail);
-          setDeleteModal({ open: false });
-        }}
-        onCancel={handleDeleteModalClose}
-      >
-        This action cannot be undone.
-      </Modal>
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full"
-      >
-        {cocktails.map((cocktail) => (
-          /* grid display  */
-          <div
-            key={cocktail.id}
-            className="grid grid-cols-[1fr,auto] md:grid-cols-[1fr,auto] gap-4 items-center"
-          >
-            <AccordionItem
+    <Container>
+      <div className="flex min-h-screen flex-col items-center md:px-24 pt-4">
+        <h1 className="text-3xl">Previous Cocktails</h1>
+        <Modal
+          isOpen={deleteModal.open}
+          title="Are you sure you want to delete this cocktail?"
+          onClose={handleDeleteModalClose}
+          onSubmit={() => {
+            if (!deleteModal.cocktail) return;
+            handleDeleteRecord(deleteModal.cocktail);
+            setDeleteModal({ open: false });
+          }}
+          onCancel={handleDeleteModalClose}
+        >
+          This action cannot be undone.
+        </Modal>
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full"
+        >
+          {cocktails.map((cocktail) => (
+            /* grid display  */
+            <div
               key={cocktail.id}
-              value={cocktail.id}
+              className="grid grid-cols-[1fr,auto] md:grid-cols-[1fr,auto] gap-4 items-center"
             >
-              <AccordionTrigger>{cocktail.name}</AccordionTrigger>
-              <AccordionContent>
-                <CocktailCard cocktail={cocktail} />
-              </AccordionContent>
-            </AccordionItem>
-            <TrashIcon onClick={() => handleDeleteModalOpen(cocktail)} />
-          </div>
-        ))}
-      </Accordion>
-    </main>
+              <AccordionItem
+                key={cocktail.id}
+                value={cocktail.id}
+              >
+                <AccordionTrigger>{cocktail.name}</AccordionTrigger>
+                <AccordionContent>
+                  <CocktailCard cocktail={cocktail} />
+                </AccordionContent>
+              </AccordionItem>
+              <TrashIcon onClick={() => handleDeleteModalOpen(cocktail)} />
+            </div>
+          ))}
+        </Accordion>
+      </div>
+    </Container>
   );
 }

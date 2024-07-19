@@ -69,13 +69,12 @@ export function Header() {
       <header
         ref={headerRef}
         className={`bg-gradient-to-r from-purple-700 to-indigo-800 text-white 
-          py-4 px-6 fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ${
+          py-4 fixed top-0 left-0 right-0 z-10 transition-transform duration-300 ${
             isVisible ? "translate-y-0" : "-translate-y-full"
           }`}
-        id="main-header"
         role="banner"
       >
-        <div className="container mx-auto flex justify-between items-center">
+        <div className="mx-auto flex justify-between items-center mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Link
             href="/"
             passHref
@@ -113,5 +112,3 @@ export function Header() {
     </>
   );
 }
-
-export default Header;
